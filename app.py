@@ -75,10 +75,11 @@ def calculate_dli(dose, recipient_weight, donor_tlc, lymph_percent, donor_hct, m
         # Adjust flow rate based on Hct
         base_flow = METHODS[method]['params']['flow_rate'][0] + (METHODS[method]['params']['flow_rate'][1]-METHODS[method]['params']['flow_rate'][0])*(lymph_percent/100)
         flow_rate = base_flow * (1 - 0.2*(donor_hct-40)/40)  # Reduce flow for high Hct
+        flow_rate = max(METHODS[method]['params']['flow_rate'][0], min(METHODS[method]['params']['flow_rate'][1], flow_rate))
         
         params = {
             'Interface Position': f"{interface_pos:.2f}",
-            'Flow Rate': f"{max(METHODS[method]['params']['flow_rate'][0], min(METHODS[method]['params']['flow_rate'][1], flow_rate):.1f} mL/min",
+            'Flow Rate': f"{flow_rate:.1f} mL/min",
             'ACD Ratio': f"1:{int((METHODS[method]['params']['acd_ratio'][0] + METHODS[method]['params']['acd_ratio'][1])/2 + (1 if donor_hct > 45 else 0))}",
             'Plasma Removal': f"{METHODS[method]['params']['plasma_removal'][0] + (5 if donor_hct > 45 else 0)} mL",
             'Hct Efficiency': f"{hct_efficiency:.2f}",
