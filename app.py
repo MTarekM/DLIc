@@ -79,7 +79,7 @@ def main():
     # Display results
     st.subheader("Results")
     st.write(f"**Required CD3+ cells:** {dose * recipient_weight:.1f} ×10⁶ cells")
-    st.write(f"**Effective CD3+ concentration:** {(donor_tlc * 1e3 * (lymph_percent/100) * (cd3_percent/100):.1f} cells/μL")
+    st.write(f"**Effective CD3+ concentration:** {(donor_tlc * 1e3 * (lymph_percent/100) * (cd3_percent/100)):.1f} cells/μL")
     st.write(f"**Required volume:** {volume:.1f} mL")
     
     if method != 'Whole Blood':
