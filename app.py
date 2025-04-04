@@ -19,7 +19,6 @@ METHODS = {
         'rbc_contam': 15.0,  # Higher RBC contamination
         'cd3_estimate': lambda tlc, lymph: 70 + 15*(tlc/15) + 10*(lymph/50),  # Better CD3+ selection
         'params': {
-            'interface_position': (0.5, 1.5),
             'flow_rate': (40, 60),
             'acd_ratio': (11, 13),
             'plasma_removal': (5, 15)
@@ -32,7 +31,6 @@ METHODS = {
         'rbc_contam': 10.0,  # Lower RBC contamination
         'cd3_estimate': lambda tlc, lymph: 75 + 20*(tlc/15) + 15*(lymph/50),  # Best CD3+ selection
         'params': {
-            'interface_position': (0.5, 1.5),
             'flow_rate': (50, 70),
             'acd_ratio': (12, 14),
             'plasma_removal': (5, 10)
@@ -67,18 +65,12 @@ def calculate_dli(dose, recipient_weight, donor_tlc, lymph_percent, donor_hct, m
     
     params = {}
     if method != 'Whole Blood':
-        # Adjust interface position based on Hct
-        interface_pos = 1.0 - 0.5*(donor_tlc/15) + 0.25*(lymph_percent/50) - 0.2*(donor_hct-40)/40
-        interface_pos = max(METHODS[method]['params']['interface_position'][0], 
-                          min(METHODS[method]['params']['interface_position'][1], interface_pos))
-        
         # Adjust flow rate based on Hct
         base_flow = METHODS[method]['params']['flow_rate'][0] + (METHODS[method]['params']['flow_rate'][1]-METHODS[method]['params']['flow_rate'][0])*(lymph_percent/100)
         flow_rate = base_flow * (1 - 0.2*(donor_hct-40)/40)  # Reduce flow for high Hct
         flow_rate = max(METHODS[method]['params']['flow_rate'][0], min(METHODS[method]['params']['flow_rate'][1], flow_rate))
         
         params = {
-            'Interface Position': f"{interface_pos:.2f}",
             'Flow Rate': f"{flow_rate:.1f} mL/min",
             'ACD Ratio': f"1:{int((METHODS[method]['params']['acd_ratio'][0] + METHODS[method]['params']['acd_ratio'][1])/2 + (1 if donor_hct > 45 else 0))}",
             'Plasma Removal': f"{METHODS[method]['params']['plasma_removal'][0] + (5 if donor_hct > 45 else 0)} mL",
@@ -145,7 +137,6 @@ def main():
             - Reducing flow rate by 10-20%
             - Increasing ACD ratio by 1-2 points
             - Increasing plasma removal by 5-10 mL
-            - Using lower interface position
             """)
     
     # Plot with recommended dose marker
